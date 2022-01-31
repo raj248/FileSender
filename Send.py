@@ -11,6 +11,7 @@ def connect(address):
     return sock
 
 
+
 def Sendfile(content:[], address):
     saperator = b'<SAPERATOR>'
     for i in content:
