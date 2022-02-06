@@ -1,0 +1,34 @@
+from broadcastListener import Listener
+from Send import Sender
+import json
+
+NAME = None
+RECV_PORT = None
+RECV_IP = None
+BROADCAST_PORT = 9990
+BUFFER_SIZE = 2**14  # 16384 bytes
+SAPERATOR = b'<SAPERATOR>'
+
+def Profile():
+	with open('profile.json') as f:
+		return json.loads(f.read())
+
+def Initialize():
+	global NAME, RECV_PORT ,RECV_IP ,BROADCAST_PORT ,BUFFER_SIZE ,SAPERATOR 	
+	profile = Profile()
+	NAME = profile['Name']
+	RECV_PORT = profile['RECV_PORT']
+	RECV_IP = profile['RECV_IP']
+	BROADCAST_PORT = profile['BROADCAST_PORT']
+	BUFFER_SIZE = int(profile['BUFFER_SIZE'])
+	SAPERATOR = profile['SAPERATOR'].encode()
+
+def Send():
+	Initialize()
+	listener = Listener(NAME = NAME)
+	device,(ip,_) = listener.GetPublicDevice()
+	sender = Sender()
+	sender.Sendfile((ip,device["RECV_PORT"]))
+	# print(device,ip)
+
+

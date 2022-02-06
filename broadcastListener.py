@@ -1,11 +1,12 @@
 import socket
 import json
 
-class listener:
+class Listener:
     
-    def __init__(self):
-        self.BROADCAST_PORT = 9990
-        self.BUFFER_SIZE = 2**14
+    def __init__(self, NAME, BROADCAST_PORT = 9990, BUFFER_SIZE = 2**14):
+        self.BROADCAST_PORT = BROADCAST_PORT
+        self.BUFFER_SIZE = BUFFER_SIZE
+        self.NAME = NAME
 
     def Connection(self):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -14,14 +15,19 @@ class listener:
         return sock
 
     def listen(self, conn):
+        print("Available Devices")
+        while True:
+            bytesAddressPair = conn.recvfrom(self.BUFFER_SIZE)
 
-        bytesAddressPair = conn.recvfrom(self.BUFFER_SIZE)
+            profile = json.loads(bytesAddressPair[0].decode())
+            address = bytesAddressPair[1]
 
-        profile = json.loads(bytesAddressPair[0].decode())
-        address = bytesAddressPair[1]
+            # print(profile,address)
+            if profile["Name"] == self.NAME:
+                continue
+            print(profile['Name'])
 
-        # print(profile,address)
-        return (profile,address)
+            return (profile,address)
 
     def GetPublicDevice(self):
         conn = self.Connection()
@@ -30,5 +36,6 @@ class listener:
 
         return result
 
-# l = listener()
-# print(l.GetPublicDevice())
+if __name__ == '__main__':
+    l = Listener()
+    print(l.GetPublicDevice())

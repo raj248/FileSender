@@ -2,9 +2,9 @@ import socket, time
 import json
 import threading
 
-class broadcast:
-    def __init__(self):
-        self.BROADCAST_PORT = 9990
+class Broadcast:
+    def __init__(self, BROADCAST_PORT = 9990):
+        self.BROADCAST_PORT = BROADCAST_PORT
         self.BROADCAST_IP = '255.255.255.255'
         self.SERVER_ADDRESS_PORT = (self.BROADCAST_IP, self.BROADCAST_PORT)
         self.SERVER = True
@@ -39,6 +39,7 @@ class broadcast:
     def Stop(self):
         self.SERVER = False
 
+if __name__ == '__main__':
+    b = Broadcast()
+    b.Start()
 
-b = broadcast()
-b.Start()
