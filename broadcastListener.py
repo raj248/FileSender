@@ -25,8 +25,8 @@ class Listener:
             address = bytesAddressPair[1]
 
             # print(profile,address)
-            # if profile["Name"] == self.NAME:
-            if profile["Name"] == None:
+            if profile["Name"] == self.NAME:
+            # if profile["Name"] == None:
                 continue
             print(profile['Name'])
             break
