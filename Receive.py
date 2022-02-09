@@ -3,7 +3,9 @@ class Receiver:
 		self.BUFFER_SIZE = BUFFER_SIZE
 		self.RECV_PORT = RECV_PORT
 		self.RECV_IP = RECV_IP
-		self.SAPERATOR = SAPERATOR      
+		self.SAPERATOR = SAPERATOR  
+		self.RECV_DEST = '/home/bell/Desktop/RECV/'
+
 
 
 	def Connection(self):
@@ -21,30 +23,49 @@ class Receiver:
 		# content = [i for i in f.read().split('\'') if i!=''and i!=' ']
 		return name.split('/')[-1]
 
+	def fix_ownership(self, path):
+		"""Change the owner of the file to SUDO_UID"""
+		import os
+
+		uid = os.environ.get('SUDO_UID')
+		gid = os.environ.get('SUDO_GID')
+
+		uid = '1000' if not uid else uid
+		gid = '1000' if not gid else gid
+		if uid is not None:
+			os.chown(path, int(uid), int(gid))
 
 	def Receive(self, _sock):
-		SAPERATOR = b'<SAPERATOR>'
+		import time
 		print('Recieving File')
 		# outputf = open(i,'wb')
 		outputf = ''
+		buffer = []
 
 		while True:
 			chunk = _sock.recv(self.BUFFER_SIZE)
-			if not chunk:
+			buffer += chunk.split(b'<END>') if chunk else []
+			chunk = buffer.pop(0) if buffer else chunk
+
+			if not chunk and not buffer:
+
 				outputf.close()
 				break
-			if SAPERATOR in chunk:
-				filename,chunk = chunk.split(SAPERATOR)
+			if self.SAPERATOR in chunk:
+				filename,chunk = chunk.split(self.SAPERATOR)
+				filename = self.RECV_DEST + self.get_filename(filename.decode())
+				outputf = open(filename,'wb')
 
-				outputf = open(self.get_filename(filename.decode()),'wb')
-				print(f'Recieving {self.get_filename(filename.decode())}')
+				self.fix_ownership(filename)
+				
+				print(f'Recieving {filename}')
 			outputf.write(chunk)
 
 			# if data==b'next':
 			# outputf.close()
 
 
-		_sock.close()
+		# _sock.close()
 
 	def ReceiveFile(self):
 		conn = self.Connection()

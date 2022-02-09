@@ -24,23 +24,27 @@ class Sender:
 
     def Sendfile(self, addressPostPair):
         content = self.GetFiles('content.txt')
+        print(content)
+        if not content:
+            return
         for i in content:
 
             s = self.connect(addressPostPair)
-            print('Sending ',i)
+            print('Sending ',i.split('/')[-1])
             inputf = open(i,'rb')
             s.send(bytes(i.encode())+self.SAPERATOR)
             while True:
                 chunk = inputf.read(self.BUFFER_SIZE)
-                if not chunk :
-                    print(f'{i} has been sent')
-                    s.send(b'')
+                if not chunk:
+                    print({i.split('/')[-1]}, 'SENT')
+                    s.send(b'<END>')
                     s.close()
                     inputf.close()
                     break
 
 
                 try:
+                    # s.send(chunk) 
                     s.sendall(chunk) 
                 except socket.error:
                     s.close()
@@ -50,6 +54,5 @@ class Sender:
 
 if __name__ == '__main__':
     send = Sender()
-    content = send.GetFiles('content.txt')
     send.Sendfile(('192.168.0.109', 9990))
 

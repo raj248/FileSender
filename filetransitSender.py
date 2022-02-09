@@ -14,14 +14,13 @@ def Profile():
 		return json.loads(f.read())
 
 def Initialize():
-	global NAME, RECV_PORT ,RECV_IP ,BROADCAST_PORT ,BUFFER_SIZE ,SAPERATOR 	
+	global NAME, RECV_PORT ,RECV_IP ,BROADCAST_PORT ,BUFFER_SIZE 	
 	profile = Profile()
 	NAME = profile['Name']
 	RECV_PORT = profile['RECV_PORT']
 	RECV_IP = profile['RECV_IP']
 	BROADCAST_PORT = profile['BROADCAST_PORT']
 	BUFFER_SIZE = int(profile['BUFFER_SIZE'])
-	SAPERATOR = profile['SAPERATOR'].encode()
 
 def Send():
 	Initialize()

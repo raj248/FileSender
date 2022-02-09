@@ -16,6 +16,8 @@ class Listener:
 
     def listen(self, conn):
         print("Available Devices")
+        profile = None
+        address = None
         while True:
             bytesAddressPair = conn.recvfrom(self.BUFFER_SIZE)
 
@@ -23,11 +25,12 @@ class Listener:
             address = bytesAddressPair[1]
 
             # print(profile,address)
-            if profile["Name"] == self.NAME:
+            # if profile["Name"] == self.NAME:
+            if profile["Name"] == None:
                 continue
             print(profile['Name'])
-
-            return (profile,address)
+            break
+        return (profile,address)
 
     def GetPublicDevice(self):
         conn = self.Connection()
@@ -37,5 +40,5 @@ class Listener:
         return result
 
 if __name__ == '__main__':
-    l = Listener()
+    l = Listener(NAME="Arc_Nova_13")
     print(l.GetPublicDevice())
