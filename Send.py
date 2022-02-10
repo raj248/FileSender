@@ -1,4 +1,5 @@
 import socket
+import os
 
 class Sender:
     def __init__(self, BUFFER_SIZE = 2**14, SAPERATOR = b'<SAPERATOR>'):
@@ -14,9 +15,13 @@ class Sender:
         return sock
 
     def GetFiles(self,filename):
-        with open(filename,'r') as f:
-            content = [i for i in f.read().split('\'') if i!=''and i!=' ']
-            return content
+        if not os.path.isdir(filename):
+            with open(filename,'r') as f:
+                content = [i for i in f.read().split('\'') if i!=''and i!=' ']
+                return content
+        else:
+            return [filename + i for i in os.listdir(filename)]
+
 
     def EmptyContent(self, filename):
         with open(filename,'w'):
@@ -24,7 +29,9 @@ class Sender:
 
     def Sendfile(self, addressPostPair):
         content = self.GetFiles('content.txt')
-        print(content)
+        if not content:
+            content = self.GetFiles('../Send/')
+        # print(content)
         if not content:
             return
         for i in content:

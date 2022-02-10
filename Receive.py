@@ -1,3 +1,5 @@
+import time
+
 class Receiver:
 	def __init__(self, BUFFER_SIZE = 2**14, RECV_PORT = 9990, RECV_IP = '0.0.0.0', SAPERATOR = b'<SAPERATOR>'):
 		self.BUFFER_SIZE = BUFFER_SIZE
@@ -36,7 +38,6 @@ class Receiver:
 			os.chown(path, int(uid), int(gid))
 
 	def Receive(self, _sock):
-		import time
 		print('Recieving File')
 		# outputf = open(i,'wb')
 		outputf = ''
