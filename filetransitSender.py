@@ -30,4 +30,5 @@ def Send():
 	sender.Sendfile((ip,device["RECV_PORT"]))
 	# print(device,ip)
 
-
+if __name__ == '__main__':
+	Send()
