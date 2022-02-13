@@ -1,8 +1,0 @@
-{
-	"Name":"Arc_Nova_13",
-	"Platform": "PC",
-	"RECV_PORT": 9996,
-	"RECV_IP": "0.0.0.0",
-	"BROADCAST_PORT": 9990,
-	"BUFFER_SIZE": 16384
-}
