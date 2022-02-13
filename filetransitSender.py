@@ -27,7 +27,7 @@ def Send():
 	listener = Listener(NAME = NAME)
 	device,(ip,_) = listener.GetPublicDevice()
 	sender = Sender()
-	sender.Sendfile((ip,device["RECV_PORT"]))
+	sender.SendFileMultiplex((ip,device["RECV_PORT"]))
 	# print(device,ip)
 
 if __name__ == '__main__':

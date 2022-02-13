@@ -8,4 +8,4 @@ for i in sys.argv:
 	f.write(i)
 f.close()
 
-filetransitSender.Send()
+# filetransitSender.Send()

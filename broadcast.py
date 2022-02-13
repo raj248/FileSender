@@ -34,7 +34,7 @@ class Broadcast:
         profile = self.Profile()
         dataToSend = profile.encode()
         self.SERVER = True
-        threading.Thread(target=self.Server,args=(server, dataToSend)).start()
+        threading.Thread(target=self.Server,args=(server, dataToSend), daemon = True).start()
 
     def Stop(self):
         self.SERVER = False

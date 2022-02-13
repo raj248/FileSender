@@ -1,4 +1,7 @@
+import socket
 import time
+import multiprocessing
+
 
 class Receiver:
 	def __init__(self, BUFFER_SIZE = 2**14, RECV_PORT = 9990, RECV_IP = '0.0.0.0', SAPERATOR = b'<SAPERATOR>'):
@@ -7,15 +10,15 @@ class Receiver:
 		self.RECV_IP = RECV_IP
 		self.SAPERATOR = SAPERATOR  
 		self.RECV_DEST = '/home/bell/Desktop/RECV/'
+		# self.RECV_DEST = '../RECV/'
 
 
 
-	def Connection(self):
-		import socket
+	def Connection(self,port):
 
 		sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-		sock.bind((self.RECV_IP, self.RECV_PORT))
+		sock.bind((self.RECV_IP, port))
 		sock.listen(5)
 		print('Serving  on port %s.' % (sock.getsockname()[1],))
 
@@ -38,7 +41,6 @@ class Receiver:
 			os.chown(path, int(uid), int(gid))
 
 	def Receive(self, _sock):
-		print('Recieving File')
 		# outputf = open(i,'wb')
 		outputf = ''
 		buffer = []
@@ -50,16 +52,16 @@ class Receiver:
 
 			if not chunk and not buffer:
 
+				print(f'Recieved {self.filename}')
 				outputf.close()
 				break
 			if self.SAPERATOR in chunk:
-				filename,chunk = chunk.split(self.SAPERATOR)
-				filename = self.RECV_DEST + self.get_filename(filename.decode())
-				outputf = open(filename,'wb')
+				self.filename,chunk = chunk.split(self.SAPERATOR)
+				self.filename = self.RECV_DEST + self.get_filename(self.filename.decode())
+				outputf = open(self.filename,'wb+')
 
-				self.fix_ownership(filename)
+				self.fix_ownership(self.filename)
 				
-				print(f'Recieving {filename}')
 			outputf.write(chunk)
 
 			# if data==b'next':
@@ -68,17 +70,29 @@ class Receiver:
 
 		# _sock.close()
 
-	def ReceiveFile(self):
-		conn = self.Connection()
+	def ReceiveFile(self,port = None):
+		if not port:
+			port = self.RECV_PORT
+		conn = self.Connection(port)
 		while True:
 			_sock, addr = conn.accept()
-			print("Incoming Data from : ", addr)
+			# print("Incoming Data from : ", addr)
 
 
 			self.Receive(_sock)
-			_sock.close()
+			# _sock.close()
 
+	def StartMultiplex(self):
+		ports = [self.RECV_PORT + i for i in range(4)]
+		process = [multiprocessing.Process(target=self.ReceiveFile,args=(i,), daemon = True)
+					for i in ports]
+
+		for p in process:
+			p.start()
+			time.sleep(1)
 
 if __name__ == '__main__':
 	recv = Receiver()
-	recv.ReceiveFile()
+	# recv.ReceiveFile()
+	recv.StartMultiplex()
+	input()
